@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/pluralsight/webservices/cors"
+	"web_service/cors"
 )
 
 const receiptPath = "receipts"

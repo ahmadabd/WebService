@@ -67,6 +67,7 @@ func handleProduct(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		product, err := getProduct(productID)
 		if err != nil {
+			log.Print("error to get product")
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}

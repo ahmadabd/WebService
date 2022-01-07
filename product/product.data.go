@@ -3,6 +3,7 @@ package product
 import (
 	"context"
 	"database/sql"
+	"log"
 	"time"
 	"web_service/database"
 )
@@ -11,19 +12,19 @@ func getProduct(productID int) (*Product, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	row := database.DbConn.QueryRowContext(ctx, `SELECT 
-	manufacturer,
-	sku,
-	upc,
-	pricePerUnit,
-	quantityOnHand,
+	productId, 
+	manufacturer, 
+	sku, 
+	upc, 
+	pricePerUnit, 
+	quantityOnHand, 
 	productName 
 	FROM products 
-	WHERE 
-	productId = ?`, productID)
+	WHERE productId = ?`, productID)
 
 	product := &Product{}
-
-	err := row.Scan(&product.ProductID,
+	err := row.Scan(
+		&product.ProductID,
 		&product.Manufacturer,
 		&product.Sku,
 		&product.Upc,
@@ -31,13 +32,12 @@ func getProduct(productID int) (*Product, error) {
 		&product.QuantityOnHand,
 		&product.ProductName,
 	)
-
-	if err != sql.ErrNoRows {
+	if err == sql.ErrNoRows {
 		return nil, nil
 	} else if err != nil {
+		log.Println(err)
 		return nil, err
 	}
-
 	return product, nil
 }
 
@@ -55,6 +55,7 @@ func getProductList() ([]Product, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	results, err := database.DbConn.QueryContext(ctx, `SELECT 
+	productId,
 	manufacturer,
 	sku,
 	upc,
